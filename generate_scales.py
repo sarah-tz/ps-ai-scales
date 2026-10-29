@@ -44,6 +44,9 @@ PROMPT_FILE = HERE / "prompts.json"
 ANTHROPIC_VERSION = "2023-06-01"
 NOT_SENT = "not sent (provider default)"
 KEY_VARS = {"anthropic": "ANTHROPIC_API_KEY", "openai": "OPENAI_API_KEY"}
+# Finish reasons that mean the model ended its reply itself. Anything else
+# (for example max_tokens, length, refusal) means the reply may be cut off.
+FINISHED = {"end_turn", "stop"}
 
 
 # ---------------------------------------------------------------- helpers
@@ -262,13 +265,13 @@ def main():
     }
     environment = {"python": platform.python_version(), "platform": platform.platform()}
 
-    # Resume: skip combinations that already have a stage 2 row for this model.
+    # Resume: skip combinations that already have a stage 2 reply (not an error) for this model.
     done = set()
     if out_path.exists():
         for line in out_path.read_text().splitlines():
             if line.strip():
                 row = json.loads(line)
-                if row.get("stage") == 2 and row.get("model_requested") == args.model:
+                if row.get("stage") == 2 and row.get("model_requested") == args.model and not row.get("error"):
                     done.add(row["combination_id"])
 
     combos = [
@@ -285,7 +288,7 @@ def main():
             f.write(json.dumps(row, ensure_ascii=False) + "\n")
 
     def run_call(messages, base):
-        """One call, with one identical retry if the item count is wrong."""
+        """One call, with one identical retry if the reply is invalid (wrong item count, cut off, or error)."""
         attempt = 0
         while True:
             attempt += 1
@@ -301,7 +304,7 @@ def main():
                      "response_id": None, "request_id": None}
                 error = str(e)
             items = parse_items(r["text"])
-            valid = error is None and len(items) == n_items
+            valid = error is None and len(items) == n_items and r["finish_reason"] in FINISHED
             row = {
                 **base,
                 "timestamp_utc": started,

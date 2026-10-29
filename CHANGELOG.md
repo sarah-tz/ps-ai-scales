@@ -53,3 +53,13 @@ Found in the second smoke test (`test_smoke_v2.jsonl`): the stage 2 reply number
 - `PROTOCOL.md`: new section "Selection for the Stage 1 submission". One AI scale is drawn at random (seed 20261028) from all valid stage 1 scales of the models run by then (Anthropic and OpenAI), only after both have run. The 6-scale balanced draw stays for the full study.
 - New `select_scales.py`: builds the pool (valid stage 1 rows, one per combination, sorted by ID), draws with the seed, and writes `selected_scales.csv` and `selected_scales.md` recording the seed, pool size, models and log hash. Written before any real run, so the rule is fixed in advance.
 - New `tests/test_select.py`: pool contains only valid stage 1 scales; same seed gives the same draw and different seeds give different draws; output files record the seed.
+
+### 2026-10-28, version 3: two fixes from code review (approved)
+
+A fresh read of the version 2 code found two bugs, both confirmed with tests. No study data existed yet, so no data is affected.
+
+- Cut-off replies: a reply that stopped partway through item 7 (for example at the length limit) still had 7 numbered lines and was counted valid and "exact". `valid` now also requires the model to report that it finished the reply itself (`finish_reason` `end_turn` or `stop`). Otherwise the reply is invalid and gets the usual single retry.
+- Failed stage 2 on re-run: if both stage 2 attempts failed with an error, a re-run treated the combination as done. Now only a stage 2 row without an error counts as done, matching how failed stage 1 calls are handled.
+- `prompts.json` version 2 to 3. The prompt text is unchanged; the version records the rule change. `PROTOCOL.md` retry rule updated.
+- `tests/test_logging.py`: tests for both fixes. 21 tests pass.
+- Not changed yet: `PROTOCOL.md` still says the local model gets a recorded seed, which the code does not do. To be corrected when the open-weight model is set up.

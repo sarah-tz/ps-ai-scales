@@ -67,5 +67,47 @@ class MockRunLogsSettings(unittest.TestCase):
             self.assertIn("messages", row["request"]["body"])
 
 
+RUN_WITH_PATCHED_MOCK = r'''
+import os, sys
+sys.argv = ["g", "--provider", "mock", "--model", "mock-1", "--runs", "1", "--levels", "L0", "--pause", "0", "--out", sys.argv[1]]
+sys.path.insert(0, os.environ["ROOT"])
+import generate_scales as g
+real = g.call_mock
+def patched(model, messages, max_tokens):
+    stage2 = len(messages) > 1
+    if stage2 and os.environ.get("FAIL_STAGE2"):
+        raise RuntimeError("HTTP 500: simulated")
+    r = real(model, messages, max_tokens)
+    if not stage2 and os.environ.get("CUT_OFF_STAGE1"):
+        r["finish_reason"] = "max_tokens"
+    return r
+g.PROVIDERS["mock"] = patched
+g.main()
+'''
+
+
+class ValidityAndResume(unittest.TestCase):
+    def run_patched(self, log, **flags):
+        env = {**os.environ, "ROOT": str(ROOT), **flags}
+        subprocess.run([sys.executable, "-c", RUN_WITH_PATCHED_MOCK, str(log)], env=env, check=True, capture_output=True)
+        return [json.loads(line) for line in log.read_text().splitlines()]
+
+    def test_cut_off_reply_is_invalid_and_retried(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            rows = self.run_patched(Path(tmp) / "test_log.jsonl", CUT_OFF_STAGE1="1")
+        stage1 = [r for r in rows if r["stage"] == 1]
+        self.assertEqual(len(stage1), 2)  # first attempt plus one retry
+        self.assertTrue(all(len(r["parsed_items"]) == 7 and not r["valid"] for r in stage1))
+
+    def test_failed_stage2_is_redone_on_rerun(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            log = Path(tmp) / "test_log.jsonl"
+            self.run_patched(log, FAIL_STAGE2="1")
+            rows = self.run_patched(log)
+        stage2 = [r for r in rows if r["stage"] == 2]
+        self.assertEqual([bool(r["error"]) for r in stage2], [True, True, False])
+        self.assertTrue(stage2[-1]["valid"])
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -1,6 +1,6 @@
 # Protocol for generating AI psychological safety scales
 
-Status: frozen, version 2 (matches `prompts.json` version 2; see `CHANGELOG.md` for the commit). Design choices below are judgments, not tested results. Model behavior is not assured to repeat across runs or over time.
+Status: frozen, version 3 (matches `prompts.json` version 3; see `CHANGELOG.md` for the commit). Design choices below are judgments, not tested results. Model behavior is not assured to repeat across runs or over time.
 
 ## Purpose
 
@@ -44,7 +44,7 @@ The exact text is in `prompts.json`. Every prompt is the construct block for its
 3. Run order for all combinations is shuffled with a recorded seed.
 4. For each combination: fresh conversation, stage 1 prompt, save the raw reply, send the stage 2 text in the same conversation, save, parse the 7 items. The items are taken from the last numbered list in the reply (a list starts where numbering returns to 1). Each reply also gets a format check: "exact" if it contains only a list numbered 1 to 7, otherwise "deviation" with the reason. The check does not change validity or trigger a retry. Every deviation is listed in the pool report and read by eye against its raw reply to confirm the extracted items, and the deviation rate is reported per model.
 5. Do not edit outputs. Do not skip or redo a run because the result looks poor.
-6. Retry rule: if a reply does not contain exactly 7 items, repeat the identical call once. Log both attempts. Report the invalid rate. A call that fails with an error (network or API) returns no items, so it counts as invalid and gets the same single retry. If both stage 1 attempts fail with no text, stage 2 is not sent; running the script again repeats that combination, because only combinations with a logged stage 2 are skipped. This re-run is for technical failures only, and the failed attempts stay in the log.
+6. Retry rule: a reply is valid only if it contains exactly 7 items and the model reports that it finished the reply itself (finish reason `end_turn` or `stop`), so a reply cut off by a length limit or a refusal is invalid even if 7 numbered lines are present. If a reply is invalid, repeat the identical call once. Log both attempts. Report the invalid rate. A call that fails with an error (network or API) returns no items, so it counts as invalid and gets the same single retry. If both stage 1 attempts fail with no text, stage 2 is not sent; running the script again repeats that combination, because only combinations with a stage 2 reply are skipped. The same applies when both stage 2 attempts fail with an error: a re-run repeats the combination. This re-run is for technical failures only, and the failed attempts stay in the log.
 7. Commit after each batch. Check for personal information first.
 8. Fallback without API keys: temporary chat, memory and personalization off, interface recorded as "chat". Settings are hidden in chat apps, and a model alias may point to a newer version over time, so state this limitation.
 
