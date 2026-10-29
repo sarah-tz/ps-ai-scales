@@ -54,6 +54,15 @@ class SelectScales(unittest.TestCase):
         self.assertIn("seed 20261028", md)
         self.assertIn("drawn 1 of 30", md)
         self.assertEqual(len(out.with_suffix(".csv").read_text().strip().splitlines()), 8)
+        prompts = json.loads((ROOT / "prompts.json").read_text())
+        self.assertIn(prompts["response_scale"], md)
+
+
+class PromptScale(unittest.TestCase):
+    def test_task_text_states_the_response_scale(self):
+        prompts = json.loads((ROOT / "prompts.json").read_text())
+        self.assertIn(prompts["response_scale"], prompts["task"])
+        self.assertIn("very inaccurate", prompts["response_scale"])
 
 
 if __name__ == "__main__":

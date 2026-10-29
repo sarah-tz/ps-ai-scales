@@ -1,6 +1,6 @@
 # Protocol for generating AI psychological safety scales
 
-Status: frozen, version 3 (matches `prompts.json` version 3; see `CHANGELOG.md` for the commit). Design choices below are judgments, not tested results. Model behavior is not assured to repeat across runs or over time.
+Status: frozen, version 4 (matches `prompts.json` version 4; see `CHANGELOG.md` for the commit). Design choices below are judgments, not tested results. Model behavior is not assured to repeat across runs or over time.
 
 ## Purpose
 
@@ -13,11 +13,11 @@ Full design: 4 models x 3 information levels x 5 runs = 60 first-pass scales, pl
 | Factor | Levels | Held fixed |
 | --- | --- | --- |
 | Model | Three vendor flagships and one open-weight model run on a machine the team controls. Exact model ID recorded on the day. | Fresh conversation per run, no system prompt, no memory or personalization |
-| Information level | L0 construct name only. L1 adds Edmondson's definition. L2 adds her boundaries (not cohesiveness, beyond trust). | Output format: 7 items, 7-point agreement scale, items about "this team" |
+| Information level | L0 construct name only. L1 adds Edmondson's definition. L2 adds her boundaries (not cohesiveness, beyond trust). | Output format: 7 items, 7-point scale from "very inaccurate" to "very accurate" (Edmondson's response labels), items about "this team" |
 | Refinement | Stage 1 first output. Stage 2 one scripted revision in the same conversation. | The revision text is identical for every run |
 | Runs | 5 per model and level | Provider default sampling settings, recorded. Local model gets a recorded seed. |
 
-Why 7 items and a 7-point scale: they match Edmondson's psychological safety scale, so differences in item content are not confounded with length or response format.
+Why 7 items and a 7-point scale labelled "very inaccurate" to "very accurate": they match Edmondson's psychological safety scale, so differences in item content are not confounded with length or response format. Version 3 used "strongly disagree" to "strongly agree"; version 4 changed this so AI and validated items share one response format in the survey.
 
 Why no example items: Edmondson's items are public and may be in the models' training data. We measure overlap with her items and May et al.'s items afterwards, and report it, rather than prompting for it.
 

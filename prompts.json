@@ -1,6 +1,7 @@
 {
-  "version": "3",
-  "task": "Write 7 survey items that measure this construct. Respondents will rate their agreement with each item on a 7-point scale (1 = strongly disagree, 7 = strongly agree). Write each item as a statement about the respondent's own team, using the wording \"this team\". Return only a numbered list of the 7 items.",
+  "version": "4",
+  "task": "Write 7 survey items that measure this construct. Respondents will rate each item on a 7-point scale (1 = very inaccurate, 7 = very accurate). Write each item as a statement about the respondent's own team, using the wording \"this team\". Return only a numbered list of the 7 items.",
+  "response_scale": "7-point scale (1 = very inaccurate, 7 = very accurate)",
   "levels": {
     "L0": "The construct is psychological safety in teams.",
     "L1": "The construct is team psychological safety, defined as a shared belief that the team is safe for interpersonal risk taking.",

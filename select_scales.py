@@ -19,6 +19,8 @@ import json
 import random
 from pathlib import Path
 
+PROMPT_FILE = Path(__file__).resolve().parent / "prompts.json"
+
 
 def load_pool(log_path):
     """Valid stage 1 rows, one per combination, sorted by combination ID."""
@@ -60,8 +62,9 @@ def main():
             for i, item in enumerate(r["parsed_items"], 1):
                 w.writerow([r["combination_id"], r["model_id_returned"], r["information_level"], i, item])
 
+    scale = json.loads(PROMPT_FILE.read_text())["response_scale"]
     lines = ["# Selected AI scales", "", header, "",
-             "Respondents rate each item from 1 (strongly disagree) to 7 (strongly agree).", ""]
+             f"Response scale, as given to the models: {scale}.", ""]
     for k, r in enumerate(chosen, 1):
         lines += [f"## Scale {k}: {r['combination_id']}", ""]
         lines += [f"{i}. {item}" for i, item in enumerate(r["parsed_items"], 1)] + [""]

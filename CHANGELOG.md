@@ -70,3 +70,13 @@ A fresh read of the version 2 code found two bugs, both confirmed with tests. No
 - New `analyze_pool.py`: reads `log.jsonl` and `reference/items.md`, writes `pool_report.csv` (one row per scale and stage) and `pool_summary.md`. Counts negatively worded items with a labelled word heuristic and measures lexical overlap (Jaccard on content words) with the Edmondson and May items. Method and limits are in the script header and the summary.
 - New `tests/test_pool.py`.
 - The protocol version is unchanged: this script only reads the log and does not affect generation or the scale draw.
+
+### 2026-10-29, version 4: Edmondson's response scale in the prompt (approved)
+
+Decided after the team meeting: AI items and Edmondson's items should share one response format in the survey, so the format is not a difference between scales.
+
+- `prompts.json` version 3 to 4. Task text: "Respondents will rate their agreement with each item on a 7-point scale (1 = strongly disagree, 7 = strongly agree)." became "Respondents will rate each item on a 7-point scale (1 = very inaccurate, 7 = very accurate)." These are the end labels of Edmondson's scale as recorded in `reference/items.md`. New field `response_scale` holds the same text. Nothing else in the prompts changed.
+- `select_scales.py` now prints the response scale from `prompts.json` instead of fixed "strongly disagree / strongly agree" text.
+- Tests: the task text contains `response_scale`, and the selection file prints it.
+- `PROTOCOL.md`: design table and rationale updated.
+- Version 3 outputs (log, draw, pool report) moved unchanged to `archive/v3/`, with a note. They were written for the old response format; the study uses a new version 4 pool. Not replaced because of their content or results.
