@@ -1,0 +1,11 @@
+{
+  "version": "2",
+  "task": "Write 7 survey items that measure this construct. Respondents will rate their agreement with each item on a 7-point scale (1 = strongly disagree, 7 = strongly agree). Write each item as a statement about the respondent's own team, using the wording \"this team\". Return only a numbered list of the 7 items.",
+  "levels": {
+    "L0": "The construct is psychological safety in teams.",
+    "L1": "The construct is team psychological safety, defined as a shared belief that the team is safe for interpersonal risk taking.",
+    "L2": "The construct is team psychological safety, defined as a shared belief that the team is safe for interpersonal risk taking. It is not the same as group cohesiveness. It involves but goes beyond interpersonal trust. It is a sense of confidence that the team will not embarrass, reject, or punish someone for speaking up."
+  },
+  "revision": "Review the 7 items you wrote. Check each for wording that asks about two things at once, for ambiguity, and for overlap with another item. Check whether, together, the items cover the construct. Then return only a numbered list of exactly 7 revised items.",
+  "n_items": 7
+}

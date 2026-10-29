@@ -1,0 +1,19 @@
+# Local working notes with names (never in the anonymous repository)
+CLAUDE.md
+HANDOVER.md
+TASKS.md
+context/
+.claude/
+
+# Fake-model and smoke-test output (root only; tests/ stays tracked)
+/test_*
+
+# Keys and secrets
+.env
+.env.*
+*.key
+
+# System and Python files
+.DS_Store
+__pycache__/
+*.pyc
