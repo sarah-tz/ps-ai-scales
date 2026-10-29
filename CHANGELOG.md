@@ -64,3 +64,9 @@ A fresh read of the version 2 code found two bugs, both confirmed with tests. No
 - `prompts.json` version 2 to 3. The prompt text is unchanged; the version records the rule change. `PROTOCOL.md` retry rule updated.
 - `tests/test_logging.py`: tests for both fixes. 21 tests pass.
 - Not changed yet: `PROTOCOL.md` still says the local model gets a recorded seed, which the code does not do. To be corrected when the open-weight model is set up.
+
+### 2026-10-28, pool report (new analysis code; no change to prompts or run logic)
+
+- New `analyze_pool.py`: reads `log.jsonl` and `reference/items.md`, writes `pool_report.csv` (one row per scale and stage) and `pool_summary.md`. Counts negatively worded items with a labelled word heuristic and measures lexical overlap (Jaccard on content words) with the Edmondson and May items. Method and limits are in the script header and the summary.
+- New `tests/test_pool.py`.
+- The protocol version is unchanged: this script only reads the log and does not affect generation or the scale draw.

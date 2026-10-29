@@ -31,10 +31,14 @@ Generates AI-written psychological safety scales and logs every call. It follows
    `python3 select_scales.py --log log.jsonl --n 1`
    This writes `selected_scales.md` (ready to paste into a survey tool) and `selected_scales.csv`, with the seed recorded. See `PROTOCOL.md`, "Choosing scales for the survey".
 
+7. Describe the pool (valid rate, negatively worded items, overlap with the validated items):
+   `python3 analyze_pool.py`
+   This writes `pool_report.csv` (one row per scale and stage) and `pool_summary.md`. The method and its limits are in the script header and the summary.
+
 ## Notes
 
 - Order is shuffled with a recorded seed (`--seed`).
-- If a reply does not contain exactly 7 items, the same call is repeated once. Both attempts are logged. Nothing is regenerated for any other reason.
+- If a reply is invalid (not exactly 7 items, cut off before the model finished, or an error), the same call is repeated once. Both attempts are logged. Nothing is regenerated for any other reason.
 - Sampling settings are the provider defaults and the log says so. `--max-tokens` defaults to 16000, the value used for the study runs.
 - Each log row holds the exact request sent (without the key), the run settings and the Python version, so a run can be repeated with the same command.
 - On macOS with Python from python.org, run "Install Certificates.command" in the Python folder under Applications once, or HTTPS calls fail with `CERTIFICATE_VERIFY_FAILED`.
