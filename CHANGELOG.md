@@ -91,3 +91,11 @@ Follows the 2026-10-29 team meeting decision recorded in `DECISIONS.md`: every s
 - `selected_scales.md` and `.csv` rebuilt from the same log and seed: the same scale (`gpt-6-astra|L0|run5`) and the same items; the CSV is byte-identical. Only the response-scale lines in the .md changed.
 - `PROTOCOL.md`: the survey response-scale rule added to "Selection for the Stage 1 submission". New `DECISIONS.md` records the meeting decisions. Test added for the scale note.
 - Four smoke-test calls were made under version 4 before this correction (test files, not committed).
+
+### 2026-10-29, simulation folder added (no change to prompts or run logic)
+
+- New `simulation/`: the multi-scale simulation and power analysis written by a teammate, copied from the team workspace at commit `e5d3056274b502a232b6f87b1f6eda99d376b72b` so the project lives in one folder. `multiscale_sim.py`, `requirements.txt` and every file in `simulation/results/` are byte-identical to that commit.
+- One edit: the "Reproduce" commands in `simulation/results/MULTISCALE.md` now use the paths of this folder (`simulation/requirements.txt`, `--out simulation/results`, run from the top folder).
+- `README.md`: the simulation is listed under Files and as run step 8.
+- The simulation uses hypothetical parameters only and does not read `log.jsonl`, so the protocol version is unchanged. It needs numpy, scipy and matplotlib; the generation code stays standard library only.
+- The text of the teammate's README was not copied. Its description of a 20-scale draw from a pool of 60 does not match `PROTOCOL.md` and is still to be settled with the team.

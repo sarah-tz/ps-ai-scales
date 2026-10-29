@@ -8,6 +8,7 @@ Generates AI-written psychological safety scales and logs every call. It follows
 - `generate_scales.py`: runs one model across 3 information levels x N runs, each with a stage 1 reply and a stage 2 scripted revision. Python 3 standard library only.
 - `reference/items.md`: items of the validated scales, used for the overlap analysis.
 - `log.jsonl`: created on first run. One JSON row per model response, including retries.
+- `simulation/`: simulation and power analysis of the multi-scale design, on simulated responses with hypothetical parameters. It does not read `log.jsonl`. Needs numpy, scipy and matplotlib (`simulation/requirements.txt`). Results and method are in `simulation/results/MULTISCALE.md`.
 
 ## Run (from this folder)
 
@@ -34,6 +35,11 @@ Generates AI-written psychological safety scales and logs every call. It follows
 7. Describe the pool (valid rate, negatively worded items, overlap with the validated items):
    `python3 analyze_pool.py`
    This writes `pool_report.csv` (one row per scale and stage) and `pool_summary.md`. The method and its limits are in the script header and the summary.
+
+8. Simulation and power analysis (about two and a half minutes, fixed seed 20261029):
+   `python3 -m pip install -r simulation/requirements.txt`, then
+   `python3 simulation/multiscale_sim.py --out simulation/results`
+   This rewrites the files in `simulation/results/`. All numbers there come from simulated responses, not from the AI scales or from participants.
 
 ## Notes
 

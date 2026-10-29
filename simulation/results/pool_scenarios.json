@@ -1,0 +1,50 @@
+[
+  {
+    "scenario": "none",
+    "pool_mean_r": 0.4630068560067056,
+    "pool_tau_r": 0.00122392679356921,
+    "pool_tau_z": 0.0015579925338186995,
+    "pool_min_r": 0.45975039423376685,
+    "pool_max_r": 0.4679407984408328,
+    "reference_true_r": {
+      "edmondson_like": 0.48711077169319145,
+      "may_like": 0.4215452128720609
+    }
+  },
+  {
+    "scenario": "low",
+    "pool_mean_r": 0.47999483499262524,
+    "pool_tau_r": 0.023028663279173092,
+    "pool_tau_z": 0.030337303446441845,
+    "pool_min_r": 0.4243799272729382,
+    "pool_max_r": 0.5581424225761514,
+    "reference_true_r": {
+      "edmondson_like": 0.48660155178246045,
+      "may_like": 0.4220602205758901
+    }
+  },
+  {
+    "scenario": "medium",
+    "pool_mean_r": 0.5072951868539859,
+    "pool_tau_r": 0.050570324821899125,
+    "pool_tau_z": 0.07122215452431174,
+    "pool_min_r": 0.4116477115636655,
+    "pool_max_r": 0.6842758174917919,
+    "reference_true_r": {
+      "edmondson_like": 0.4873722273216005,
+      "may_like": 0.4253823261994667
+    }
+  },
+  {
+    "scenario": "high",
+    "pool_mean_r": 0.5735840167876961,
+    "pool_tau_r": 0.09064284674373795,
+    "pool_tau_z": 0.14152004549121114,
+    "pool_min_r": 0.3674674471484591,
+    "pool_max_r": 0.7741814514664739,
+    "reference_true_r": {
+      "edmondson_like": 0.48778104051545107,
+      "may_like": 0.4252318397937615
+    }
+  }
+]
