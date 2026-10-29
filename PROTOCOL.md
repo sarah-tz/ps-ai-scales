@@ -76,6 +76,8 @@ For the Stage 1 submission the survey uses one AI scale, drawn from the models r
 
 The 6-scale balanced draw above applies to the full study, after all four models have run.
 
+Response scale in the survey: every scale is fielded with Edmondson's 7-point scale (1 = very inaccurate, 7 = very accurate), as decided on 2026-10-29 (`DECISIONS.md`). The Stage 1 pool was generated under version 3, whose prompt named a strongly disagree to strongly agree scale; the drawn scale keeps its wording and is fielded with Edmondson's scale. From version 4 the prompt names Edmondson's scale, so later pools are generated for the scale they are fielded with.
+
 ## Minimum version for the Nov 1 submission
 
 One model, 5 runs, 3 levels (30 calls), or the 54-scale version across three models if time allows. The full grid runs after the proposal is in.

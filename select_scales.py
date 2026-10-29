@@ -9,6 +9,12 @@ Nothing about item content, overlap or quality is used.
 Writes <out>.csv (one row per item) and <out>.md (ready to paste into
 Qualtrics), each recording the seed, pool size, models and log hash.
 
+Response scale: every scale is fielded with the survey's response scale,
+which is the `response_scale` in prompts.json (Edmondson's labels; see
+DECISIONS.md, 2026-10-29). The .md file also states the scale named in the
+prompt that generated each drawn scale, read from the log, and notes when
+the two differ. Item wording is never changed.
+
 Example
   python select_scales.py --log log.jsonl --n 1
 """
@@ -17,9 +23,16 @@ import csv
 import hashlib
 import json
 import random
+import re
 from pathlib import Path
 
 PROMPT_FILE = Path(__file__).resolve().parent / "prompts.json"
+
+
+def generation_scale(row):
+    """The response scale named in the prompt that produced this row, e.g. '7-point scale (1 = ..., 7 = ...)'."""
+    m = re.search(r"\d+-point scale \([^)]*\)", row.get("prompt_text", ""))
+    return m.group(0) if m else "not stated in the logged prompt"
 
 
 def load_pool(log_path):
@@ -62,12 +75,17 @@ def main():
             for i, item in enumerate(r["parsed_items"], 1):
                 w.writerow([r["combination_id"], r["model_id_returned"], r["information_level"], i, item])
 
-    scale = json.loads(PROMPT_FILE.read_text())["response_scale"]
+    survey_scale = json.loads(PROMPT_FILE.read_text())["response_scale"]
     lines = ["# Selected AI scales", "", header, "",
-             f"Response scale, as given to the models: {scale}.", ""]
+             f"Response scale for the survey: {survey_scale}. Use it for every scale below (decision of 2026-10-29, see DECISIONS.md).", ""]
     for k, r in enumerate(chosen, 1):
+        made_for = generation_scale(r)
         lines += [f"## Scale {k}: {r['combination_id']}", ""]
         lines += [f"{i}. {item}" for i, item in enumerate(r["parsed_items"], 1)] + [""]
+        lines += [f"Generated under a prompt naming: {made_for}."]
+        if made_for != survey_scale:
+            lines += ["This differs from the survey's response scale. The items are fielded with the survey's scale; their wording is unchanged."]
+        lines += [""]
     Path(f"{args.out}.md").write_text("\n".join(lines), encoding="utf-8")
 
     print(header)

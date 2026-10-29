@@ -10,7 +10,7 @@ Record every change to the code or prompts here, with the date and the reason. A
 
 ## Frozen protocol commit
 
-- 2026-10-29: commit `ae80ae106287aa18fa8140190856ccec6bf35706`, protocol and `prompts.json` version 4. This is the version for the study runs. It replaces version 3 below.
+- 2026-10-29: commit `ae80ae106287aa18fa8140190856ccec6bf35706`, protocol and `prompts.json` version 4. It applies to runs after the Stage 1 submission. The Stage 1 data (`log.jsonl`) and draw were generated under version 3 and are kept (see `DECISIONS.md`).
 - 2026-10-28: commit `7403e51021c23bad8b35b4c5e4dfdcbce48defd4`, protocol and `prompts.json` version 3. It replaced version 2 below.
 - 2026-10-28: commit `74355f336ded1dc475cc534ca1ee09cf66f0d325`, protocol and `prompts.json` version 2. Log rows record the commit checked out at run time in `script_commit`. Later commits that touch only documentation (such as this entry) leave the code and prompts identical to this commit, and each row's `prompt_file_hash` confirms the prompts. Any change after this commit needs a version bump, an entry below and recorded approval.
 
@@ -81,3 +81,13 @@ Decided after the team meeting: AI items and Edmondson's items should share one 
 - Tests: the task text contains `response_scale`, and the selection file prints it.
 - `PROTOCOL.md`: design table and rationale updated.
 - Version 3 outputs (log, draw, pool report) moved unchanged to `archive/v3/`, with a note. They were written for the old response format; the study uses a new version 4 pool. Not replaced because of their content or results.
+
+### 2026-10-29, survey response scale applied without regenerating (approved)
+
+Follows the 2026-10-29 team meeting decision recorded in `DECISIONS.md`: every scale in the survey is fielded with Edmondson's 7-point scale (1 = very inaccurate, 7 = very accurate).
+
+- Corrects the version 4 entry above: the version 3 outputs were moved back from `archive/v3/` to their original places, unchanged (`log.jsonl` SHA-256 `a77dc13...`, as recorded in the draw). The archive note was removed. No API calls were made and no scale was regenerated or redrawn.
+- `select_scales.py`: prints the survey's response scale from `prompts.json`, states the scale named in the prompt that generated each drawn scale (read from the log), and notes when they differ. Item wording is never changed.
+- `selected_scales.md` and `.csv` rebuilt from the same log and seed: the same scale (`gpt-6-astra|L0|run5`) and the same items; the CSV is byte-identical. Only the response-scale lines in the .md changed.
+- `PROTOCOL.md`: the survey response-scale rule added to "Selection for the Stage 1 submission". New `DECISIONS.md` records the meeting decisions. Test added for the scale note.
+- Four smoke-test calls were made under version 4 before this correction (test files, not committed).

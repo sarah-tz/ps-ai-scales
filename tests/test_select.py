@@ -58,6 +58,16 @@ class SelectScales(unittest.TestCase):
         self.assertIn(prompts["response_scale"], md)
 
 
+class SurveyScaleNote(unittest.TestCase):
+    def test_note_only_when_generation_scale_differs(self):
+        from select_scales import generation_scale
+        survey = json.loads((ROOT / "prompts.json").read_text())["response_scale"]
+        old = {"prompt_text": "Respondents will rate their agreement with each item on a 7-point scale (1 = strongly disagree, 7 = strongly agree)."}
+        new = {"prompt_text": f"Respondents will rate each item on a {survey}."}
+        self.assertEqual(generation_scale(old), "7-point scale (1 = strongly disagree, 7 = strongly agree)")
+        self.assertEqual(generation_scale(new), survey)
+
+
 class PromptScale(unittest.TestCase):
     def test_task_text_states_the_response_scale(self):
         prompts = json.loads((ROOT / "prompts.json").read_text())
