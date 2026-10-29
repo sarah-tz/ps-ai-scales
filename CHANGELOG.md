@@ -10,6 +10,7 @@ Record every change to the code or prompts here, with the date and the reason. A
 
 ## Frozen protocol commit
 
+- 2026-10-28: commit `7403e51021c23bad8b35b4c5e4dfdcbce48defd4`, protocol and `prompts.json` version 3. This is the version for the study runs. It replaces version 2 below.
 - 2026-10-28: commit `74355f336ded1dc475cc534ca1ee09cf66f0d325`, protocol and `prompts.json` version 2. Log rows record the commit checked out at run time in `script_commit`. Later commits that touch only documentation (such as this entry) leave the code and prompts identical to this commit, and each row's `prompt_file_hash` confirms the prompts. Any change after this commit needs a version bump, an entry below and recorded approval.
 
 ## Changes after handover
