@@ -1,0 +1,85 @@
+---
+title: "Edmondson (1999) Psychometric Item Data Simulation & Validation"
+subtitle: "AI and its Implications for Validity"
+date: 'Updated: `r format(Sys.time(), "%B %d, %Y")`'
+output:
+  pdf_document:
+    latex_engine: xelatex
+    toc: true
+  html_document:
+    toc: true
+    toc_float: true
+    theme: flatly
+    code_folding: hide
+---
+
+```{r setup}
+# install.packages(c("MASS", "psych", "lavaan"))
+library(MASS)
+library(psych)
+library(lavaan)
+```
+
+```{r simulate}
+set.seed(123)
+n_samples <- 500
+
+# --- Latent factors (TLB = Team Learning Behavior, TP = Team Performance,
+#     IM = Internal Motivation, JI = Job Involvement) ---
+latent_means <- c(TLB = 4.8, TP = 5.3, IM = 5.6, JI = 4.1)
+
+factor_cov <- matrix(c(
+  1.00, 0.42, 0.30, 0.18,
+  0.42, 1.00, 0.25, 0.12,
+  0.30, 0.25, 1.00, 0.32,
+  0.18, 0.12, 0.32, 1.00
+), nrow = 4, byrow = TRUE,
+dimnames = list(names(latent_means), names(latent_means)))
+
+latent <- as.data.frame(mvrnorm(n_samples, mu = latent_means, Sigma = factor_cov))
+
+# --- Helper: latent score + noise, rounded and bounded to a 1-7 Likert item ---
+make_item <- function(latent_score, noise_sd) {
+  pmax(1, pmin(7, round(latent_score + rnorm(length(latent_score), 0, noise_sd))))
+}
+
+# --- Generate all items (all positively worded, so no reverse scoring needed) ---
+my_data <- data.frame(
+  # Team Learning Behavior (7 items)
+  sapply(1:7, function(i) make_item(latent$TLB, 0.85)),
+  # Team Performance (5 items)
+  sapply(c(0.90, 0.85, 0.75, 1.00, 0.90), function(s) make_item(latent$TP, s)),
+  # Internal Motivation (3 items)
+  sapply(1:3, function(i) make_item(latent$IM, 0.70)),
+  # Job Involvement (1 item)
+  make_item(latent$JI, 1.15)
+)
+colnames(my_data) <- c(paste0("TLB_", 1:7), paste0("TP_", 1:5),
+                       paste0("IM_", 1:3), "JI_1")
+
+# --- Split into EFA and CFA halves ---
+in_efa   <- sample(c(TRUE, FALSE), n_samples, replace = TRUE)
+efa_data <- my_data[in_efa, ]
+cfa_data <- my_data[!in_efa, ]
+```
+
+```{r efa}
+# Exclude single-item JI_1 from EFA
+efa_items <- efa_data[, 1:15]
+
+fa.parallel(efa_items, fa = "fa", n.iter = 100)
+
+efa_result <- fa(efa_items, nfactors = 4, rotate = "oblimin", fm = "pa")
+print(efa_result$loadings, cut = 0.3)
+```
+
+```{r cfa}
+cfa_model <- '
+  Team_Learning =~ TLB_1 + TLB_2 + TLB_3 + TLB_4 + TLB_5 + TLB_6 + TLB_7
+  Performance   =~ TP_1 + TP_2 + TP_3 + TP_4 + TP_5
+  Motivation    =~ IM_1 + IM_2 + IM_3
+'
+
+cfa_fit <- cfa(cfa_model, data = cfa_data, meanstructure = TRUE)
+summary(cfa_fit, fit.measures = TRUE, standardized = TRUE)
+```
